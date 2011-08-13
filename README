@@ -1,0 +1,6 @@
+ReconciliationHelper
+--------------------
+
+ReconciliationHelper is a utility program to help bookkeepers and accountants find the errors when the sums "don't add up". Given a list of entries and the balance that they should come to, ReconciliationHelper will identify which entries sum to the balance provided.
+
+One of the many useful things accountants do, is reconciling accounts. This process involves making sure the "sums add up" in the accounts. Shockingly, sometimes the sums don't add up. Sometimes its because someone input the same entry twice or not at all. This will be obvious because the difference in the account will exactly equal the entry in error. Sometimes however, there may be _multiple_ entries entered in twice and some not entered at all. This is the problem for ReconciliationHelper.
