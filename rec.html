@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>Reconciliation Helper</title>
+
+<script type="text/javascript">
+function hello() {
+   var s = document.getElementById("ss").value;
+   document.getElementById("as").value = qsplit(s,"\n");
+}
+
+function findsumX(){
+   var targetSum = document.getElementById("target").value;
+   var xs        = document.getElementById("ss").value;
+
+   var result = qfindsumX(targetSum, qsplit(xs,"\n"));
+   var qsum   = result.reduceRight(function(a,b) { return parseFloat(a) + b; });
+   document.getElementById("as").value = result + " add to " + qsum;
+}
+
+// findsumX' :: Int -> [Int] -> [Int]
+// findsumX' 0 xs 		= []
+// findsumX' a [] 		= []
+// findsumX' a (x:xs)
+//	| a == x	= [x]
+//	| a < x		= findsumX' a xs
+// findsumX' a xs		= head $ filter (\x -> sum x == a) [x :
+//                        findsumX' (a-x) (filterOnce (/=x) xs) | x <- xs]
+function qfindsumX(target, nums) {
+   var result = [];
+   var loopcount = 0;
+
+   for (var i = 0; i < nums.length; i++) {
+      var diff = target - nums[i];
+      if (diff == 0) return [target];
+      else if (diff > 0) {
+         var filtered = filterOnce(nums[i], nums);
+         var rest = qfindsumX(diff, filtered);
+         if (rest.length > 0) {
+            rest[rest.length] = nums[i];
+            return rest;
+         }
+      }
+   }
+
+   return [];
+}
+
+// filterOnce :: Eq a => (a -> Bool) -> [a] -> [a]
+// filterOnce f [] = []
+// filterOnce p (x:xs)	
+//	| p x 		= x : filterOnce p xs
+//	| otherwise 	= filterOnce (\_ -> True) xs
+function filterOnce(t, xs) {
+   var result = [];
+   var filteredAlready = false;
+   var index = 0; //result array will be one shorter
+   for (var i = 0; i < xs.length; i++) {
+      if ((t != xs[i]) || filteredAlready) {
+         result[index] = xs[i];
+         index++; 
+      } else {
+         filteredAlready = true;
+      }
+   }
+   return result;
+}
+
+
+function qsplit(str,term) {
+   var result = [];
+   var tempElement = "";
+   var elementIndex = 0;
+   for (var i = 0; i < str.length; i++) {
+     var nextElement = str[i];
+      if (isNaN(nextElement) || nextElement == "." || nextElement == "," || nextElement == "-") {
+         //ignore character
+      } else if (nextElement == term) {
+         result[elementIndex] = tempElement;
+         elementIndex++;
+         tempElement = "";
+      } else {
+         tempElement += nextElement;
+      }  
+   }
+   result[elementIndex] = tempElement;
+   return result.sort(function(a,b) { return a - b; });
+}
+
+</script>
+
+</head>
+<body>
+
+<table>
+
+<tr>
+<td>Which of the following numbers (copy-paste here)</td>
+<td><textarea name="ss" id="ss" rows="20"> </textarea></td>
+<td>...</td>
+</tr>
+
+<tr>
+<td>... add up to </td>
+<td><input type="text" name="target" id="target" /></td>
+<td>?</td>
+</tr>
+
+
+<tr>
+<td><button onClick="findsumX();true;" />Calculate Answer</button></td>
+</tr>
+
+<tr>
+<td><textarea name="as" id="as" rows="20" readonly> </textarea></td>
+</tr>
+</table>
+
+</body>
+</html>
